@@ -8,6 +8,9 @@ import StudentStats from "./components/StudentStats";
 import StudentTable from "./components/StudentTable"; // Assicurati che sia importato
 import profiles from "./data/StudentProfiles.json";
 import DownloadPDFButton from "./components/DownloadPDFButton";
+import DownloadFileButton from "./components/DownloadTestButton";
+import logo from "./data/logo.png"; // path relativo a App.jsx
+
 import * as XLSX from "xlsx";
 
 export default function App() {
@@ -135,9 +138,13 @@ export default function App() {
   return (
     <div className="p-6">
       <div className="bg-gradient-to-r from-blue-500 to-blue-700 text-white p-6 rounded-lg shadow-lg mb-8">
-        <h1 className="text-3xl font-bold text-center mb-4">📊 .(SYS-C)</h1>
-        <div className="mb-4">
+        <div className="flex justify-center items-center">
+          <img src={logo} className="w-20 h-20"></img>
+          <h1 className="text-3xl font-bold text-center">ClassMetrics</h1>
+        </div>
+        <div className="mb-4 flex gap-4">
           <FileUploader handleFileUpload={handleFileUpload} />
+          <DownloadFileButton src="/data/file_test.xlsx" label="Scarica file di test" />
         </div>
         <div className="mb-4">
           <SearchBar
