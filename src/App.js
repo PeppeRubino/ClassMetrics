@@ -139,7 +139,7 @@ export default function App() {
     <div className="p-6">
       <div className="bg-gradient-to-r from-blue-500 to-blue-700 text-white p-6 rounded-lg shadow-lg mb-8">
         <div className="flex justify-center items-center">
-          <img src={logo} className="w-20 h-20"></img>
+          <img src={logo} className="w-20 h-20" alt="logo ClassMetrics"></img>
           <h1 className="text-3xl font-bold text-center">ClassMetrics</h1>
         </div>
         <div className="mb-4 flex gap-4">
