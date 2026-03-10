@@ -8,8 +8,8 @@ const DownloadPDFButton = ({ targetRef, fileName = "documento" }) => {
   const downloadPDF = async () => {
     if (!targetRef.current) return;
 
-    setShowFooter(true); // Mostra il footer prima di generare il PDF
-    await new Promise((resolve) => setTimeout(resolve, 100)); // Aspetta il rendering del footer
+    setShowFooter(true);
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     const element = targetRef.current;
     const canvas = await html2canvas(element, { scale: 3 });
@@ -27,7 +27,6 @@ const DownloadPDFButton = ({ targetRef, fileName = "documento" }) => {
     } else {
       let heightLeft = imgHeight;
       let position = 10;
-
       while (heightLeft > 0) {
         pdf.addImage(imgData, "PNG", 10, position, imgWidth - 20, imgHeight);
         heightLeft -= pageHeight - 20;
@@ -39,25 +38,44 @@ const DownloadPDFButton = ({ targetRef, fileName = "documento" }) => {
     }
 
     pdf.save(`${fileName}.pdf`);
-    setShowFooter(false); // Nasconde il footer dopo il salvataggio
+    setShowFooter(false);
   };
 
   return (
     <>
       <button
         onClick={downloadPDF}
-        className="bg-gray-900 text-white text-xs font-semibold px-4 py-2 rounded-xl mt-4 shadow-sm hover:opacity-90 transition-all duration-200 absolute -right-1"
+        style={{
+          background: 'var(--accent)',
+          color: 'var(--accent-fg)',
+          fontSize: '0.7rem',
+          fontWeight: 600,
+          textTransform: 'uppercase',
+          letterSpacing: '0.12em',
+          padding: '0.5rem 1rem',
+          borderRadius: 'var(--radius)',
+          marginTop: '1rem',
+          border: 'none',
+          cursor: 'pointer',
+          boxShadow: 'var(--shadow-sm)',
+          transition: 'opacity 0.2s',
+          position: 'absolute',
+          right: '-4px',
+          fontFamily: 'inherit',
+        }}
+        onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
+        onMouseLeave={e => e.currentTarget.style.opacity = '1'}
       >
         Scarica PDF
       </button>
 
       {showFooter && (
-        <div className="hidden-pdf-footer absolute">
-          <p className=" text-gray-500 text-sm mt-4 text-left">
-            {new Date().toLocaleDateString()}<br></br> netlify.sys-c.app<br></br>@Pepperubino.crow (Instagram)
+        <div className="hidden-pdf-footer" style={{ position: 'absolute' }}>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginTop: '1rem', textAlign: 'left' }}>
+            {new Date().toLocaleDateString()}<br />netlify.sys-c.app<br />@giusepperubino.eu
           </p>
         </div>
-  )}
+      )}
     </>
   );
 };

@@ -2,23 +2,63 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Rubino Design System — CSS Variables ── */
+:root {
+  --bg: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-subtle: #f1f5f9;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.14);
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --text-faint: #94a3b8;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 8px 30px -12px rgba(0, 0, 0, 0.10);
+  --shadow-lg: 0 25px 60px -12px rgba(0, 0, 0, 0.14);
+  --accent: #0f172a;
+  --accent-fg: #ffffff;
+  --radius: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+}
+
+:root[data-theme="dark"] {
+  --bg: #0a0f1a;
+  --bg-card: #111827;
+  --bg-subtle: #1e293b;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-faint: #475569;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 30px -12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 25px 60px -12px rgba(0, 0, 0, 0.5);
+  --accent: #f1f5f9;
+  --accent-fg: #0f172a;
+}
+
+/* ── Base ── */
+*, *::before, *::after { box-sizing: border-box; }
+
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Geist', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    'Noto Sans SC', 'Noto Sans JP', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.2s, color 0.2s;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-::selection { background: #e5e7eb; color: #111827; }
+::selection { background: var(--border-strong); color: var(--text); }
 
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 9999px; }
-::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }

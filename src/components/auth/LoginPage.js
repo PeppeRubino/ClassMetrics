@@ -1,5 +1,35 @@
 import { useState } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useLanguage } from '../../context/LanguageContext';
+import { ThemeToggle } from '../ui/ThemeToggle';
+import { LanguageSelector } from '../ui/LanguageSelector';
+
+const inputStyle = {
+  width: '100%',
+  background: 'var(--bg-subtle)',
+  border: '1px solid var(--border)',
+  borderRadius: '0.75rem',
+  padding: '0.625rem 1rem',
+  fontSize: '0.875rem',
+  color: 'var(--text)',
+  outline: 'none',
+  transition: 'border-color 0.2s',
+  fontFamily: 'inherit',
+  boxSizing: 'border-box',
+};
+
+const btnLinkStyle = {
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  fontSize: '0.75rem',
+  color: 'var(--text-faint)',
+  textDecoration: 'underline',
+  textUnderlineOffset: '2px',
+  transition: 'color 0.2s',
+  fontFamily: 'inherit',
+  padding: 0,
+};
 
 export default function LoginPage() {
   const [mode, setMode] = useState('login');
@@ -8,6 +38,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
+  const { t } = useLanguage();
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -18,80 +49,177 @@ export default function LoginPage() {
     if (mode === 'magic') {
       const { error } = await supabase.auth.signInWithOtp({ email });
       if (error) setError(error.message);
-      else setInfo('Controlla la tua email per il link di accesso.');
+      else setInfo(t('login.checkEmail', 'Check your email for the access link.'));
     } else if (mode === 'login') {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setError(error.message);
     } else {
       const { error } = await supabase.auth.signUp({ email, password });
       if (error) setError(error.message);
-      else setInfo('Registrazione avvenuta. Controlla la tua email per confermare.');
+      else setInfo(t('login.registered', 'Registration complete. Check your email to confirm.'));
     }
     setLoading(false);
   }
 
+  const subtitle = mode === 'login'
+    ? t('login.subtitle.login', 'Sign in to your account')
+    : mode === 'register'
+    ? t('login.subtitle.register', 'Create an account')
+    : t('login.subtitle.magic', 'Passwordless access');
+
+  const submitLabel = loading ? '…'
+    : mode === 'login' ? t('login.signin', 'Sign In')
+    : mode === 'register' ? t('login.register', 'Sign Up')
+    : t('login.sendLink', 'Send Link');
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4 py-12">
-      <div className="w-full max-w-sm rounded-2xl border border-gray-200/60 bg-white/95 backdrop-blur-xl p-8 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)]">
-        <div className="mb-8 text-center">
-          <p className="text-[0.55rem] font-semibold uppercase tracking-[0.35em] text-gray-400">Giuseppe Rubino</p>
-          <p className="mt-1 text-xl font-semibold tracking-tight text-gray-900">ClassMetrics</p>
-          <p className="mt-1 text-xs text-gray-400">
-            {mode === 'login' ? 'Accedi al tuo account' : mode === 'register' ? 'Crea un account' : 'Accesso via email'}
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'var(--bg)',
+      padding: '1rem',
+    }}>
+      {/* Top-right theme/lang controls */}
+      <div style={{
+        position: 'fixed',
+        top: '1rem',
+        right: '1rem',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.5rem',
+        zIndex: 50,
+      }}>
+        <LanguageSelector />
+        <ThemeToggle />
+      </div>
+
+      {/* Card */}
+      <div style={{
+        width: '100%',
+        maxWidth: '22rem',
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border-strong)',
+        borderRadius: '1.5rem',
+        boxShadow: 'var(--shadow-lg)',
+        padding: '2rem',
+        boxSizing: 'border-box',
+      }}>
+        {/* Brand */}
+        <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
+          <p style={{
+            fontSize: '0.5rem',
+            fontWeight: 600,
+            textTransform: 'uppercase',
+            letterSpacing: '0.35em',
+            color: 'var(--text-faint)',
+            marginBottom: '0.25rem',
+          }}>
+            Giuseppe Rubino
+          </p>
+          <p style={{
+            fontSize: '1.25rem',
+            fontWeight: 600,
+            color: 'var(--text)',
+            letterSpacing: '-0.01em',
+            marginBottom: '0.25rem',
+          }}>
+            ClassMetrics
+          </p>
+          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            {subtitle}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3">
+        {/* Form */}
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           <input
             type="email"
             required
-            placeholder="Email"
+            placeholder={t('login.email', 'Email')}
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-200 transition-all duration-200"
+            onChange={e => setEmail(e.target.value)}
+            style={inputStyle}
+            onFocus={e => { e.target.style.borderColor = 'var(--border-strong)'; }}
+            onBlur={e => { e.target.style.borderColor = 'var(--border)'; }}
           />
           {mode !== 'magic' && (
             <input
               type="password"
               required
-              placeholder="Password"
+              placeholder={t('login.password', 'Password')}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-200 transition-all duration-200"
+              onChange={e => setPassword(e.target.value)}
+              style={inputStyle}
+              onFocus={e => { e.target.style.borderColor = 'var(--border-strong)'; }}
+              onBlur={e => { e.target.style.borderColor = 'var(--border)'; }}
             />
           )}
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl bg-gray-900 py-2.5 text-xs font-semibold uppercase tracking-widest text-white hover:opacity-90 transition-all duration-200 disabled:opacity-50"
+            style={{
+              width: '100%',
+              background: 'var(--accent)',
+              color: 'var(--accent-fg)',
+              border: 'none',
+              borderRadius: '0.75rem',
+              padding: '0.625rem 1rem',
+              fontSize: '0.7rem',
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.15em',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading ? 0.5 : 1,
+              transition: 'opacity 0.2s',
+              fontFamily: 'inherit',
+            }}
           >
-            {loading ? '…' : mode === 'login' ? 'Accedi' : mode === 'register' ? 'Registrati' : 'Invia link'}
+            {submitLabel}
           </button>
         </form>
 
-        {error && <p className="mt-4 text-center text-xs text-red-500">{error}</p>}
-        {info && <p className="mt-4 text-center text-xs text-green-600">{info}</p>}
+        {error && (
+          <p style={{ marginTop: '1rem', textAlign: 'center', fontSize: '0.75rem', color: '#ef4444' }}>
+            {error}
+          </p>
+        )}
+        {info && (
+          <p style={{ marginTop: '1rem', textAlign: 'center', fontSize: '0.75rem', color: '#22c55e' }}>
+            {info}
+          </p>
+        )}
 
-        <div className="mt-6 flex flex-col items-center gap-2">
+        {/* Mode switches */}
+        <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
           {mode !== 'login' && (
-            <button onClick={() => setMode('login')} className="text-xs text-gray-400 underline underline-offset-2 hover:text-gray-600 transition-colors duration-200">
-              Hai già un account? Accedi
+            <button onClick={() => setMode('login')} style={btnLinkStyle}>
+              {t('login.hasAccount', 'Already have an account? Sign in')}
             </button>
           )}
           {mode !== 'register' && (
-            <button onClick={() => setMode('register')} className="text-xs text-gray-400 underline underline-offset-2 hover:text-gray-600 transition-colors duration-200">
-              Crea account
+            <button onClick={() => setMode('register')} style={btnLinkStyle}>
+              {t('login.createAccount', 'Create account')}
             </button>
           )}
           {mode !== 'magic' && (
-            <button onClick={() => setMode('magic')} className="text-xs text-gray-400 underline underline-offset-2 hover:text-gray-600 transition-colors duration-200">
-              Accedi via magic link
+            <button onClick={() => setMode('magic')} style={btnLinkStyle}>
+              {t('login.magicLink', 'Sign in with magic link')}
             </button>
           )}
         </div>
       </div>
 
-      <p className="mt-6 text-[0.55rem] uppercase tracking-[0.3em] text-gray-300">
+      {/* Brand signature */}
+      <p style={{
+        marginTop: '1.5rem',
+        fontSize: '0.5rem',
+        textTransform: 'uppercase',
+        letterSpacing: '0.3em',
+        color: 'var(--text-faint)',
+      }}>
         © Giuseppe Rubino · giusepperubino.eu · @giusepperubino.eu
       </p>
     </div>

@@ -1,28 +1,21 @@
 import React from "react";
 
-// Funzione per determinare il profilo basato sulle statistiche calcolate
 const determineProfile = (mean, median, standardDeviation, mode, profiles) => {
   const compareCategory = (value, category) => {
     switch (category) {
-      case "high":
-        return value >= 7;
-      case "medium":
-        return value >= 4 && value < 7;
-      case "low":
-        return value < 4;
-      default:
-        return false;
+      case "high":   return value >= 7;
+      case "medium": return value >= 4 && value < 7;
+      case "low":    return value < 4;
+      default:       return false;
     }
   };
 
   for (const profileKey in profiles) {
     const profile = profiles[profileKey];
-
-    const isMeanMatch = compareCategory(mean, profile.criteria.mean);
+    const isMeanMatch   = compareCategory(mean, profile.criteria.mean);
     const isMedianMatch = compareCategory(median, profile.criteria.median);
     const isStdDevMatch = compareCategory(standardDeviation, profile.criteria.std_dev);
-    const isModeMatch = compareCategory(mode, profile.criteria.mode);
-
+    const isModeMatch   = compareCategory(mode, profile.criteria.mode);
     if (isMeanMatch && isMedianMatch && isStdDevMatch && isModeMatch) {
       return profile.description;
     }
@@ -35,9 +28,23 @@ const StudentProfile = ({ mean, median, standardDeviation, mode, profiles }) => 
   const studentProfileDescription = determineProfile(mean, median, standardDeviation, mode, profiles);
 
   return (
-    <div className="mt-6 bg-gray-50 border border-gray-200/60 rounded-2xl p-6 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)]">
-      <p className="text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-gray-400 mb-4">Profilo studente</p>
-      <p className="text-sm text-gray-700 leading-relaxed">{studentProfileDescription}</p>
+    <div style={{
+      marginTop: '1.5rem',
+      background: 'var(--bg-subtle)',
+      border: '1px solid var(--border)',
+      borderRadius: 'var(--radius-lg)',
+      padding: '1.5rem',
+      boxShadow: 'var(--shadow-md)',
+    }}>
+      <p style={{
+        fontSize: '0.6rem', fontWeight: 600, textTransform: 'uppercase',
+        letterSpacing: '0.25em', color: 'var(--text-faint)', marginBottom: '1rem',
+      }}>
+        Profilo studente
+      </p>
+      <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
+        {studentProfileDescription}
+      </p>
     </div>
   );
 };

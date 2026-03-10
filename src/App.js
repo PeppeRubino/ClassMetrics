@@ -1,16 +1,15 @@
 import { useState, useRef } from "react";
 import { AuthGate } from "./components/auth/AuthGate";
-import FileUploader from "./components/FileUploader";
-import SearchBar from "./components/SearchBar";
 import ClassIndex from "./components/ClassIndex";
 import StudentChart from "./components/StudentChart";
 import StudentProfile from "./components/StudentProfile";
 import StudentStats from "./components/StudentStats";
-import StudentTable from "./components/StudentTable"; // Assicurati che sia importato
+import StudentTable from "./components/StudentTable";
 import profiles from "./data/StudentProfiles.json";
 import DownloadPDFButton from "./components/DownloadPDFButton";
-import DownloadFileButton from "./components/DownloadTestButton";
-import logo from "./data/logo.png"; // path relativo a App.jsx
+import { Header } from "./components/layout/Header";
+import { Footer } from "./components/layout/Footer";
+import { useLanguage } from "./context/LanguageContext";
 
 import * as XLSX from "xlsx";
 
@@ -20,12 +19,11 @@ function App() {
   const [selectedClass, setSelectedClass] = useState(null);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const tableRef = useRef(null);
+  const { t } = useLanguage();
 
   const calculateMean = (grades) => {
     if (!grades.length) return 0;
-    return (grades.reduce((acc, val) => acc + val, 0) / grades.length).toFixed(
-      2
-    );
+    return (grades.reduce((acc, val) => acc + val, 0) / grades.length).toFixed(2);
   };
 
   const calculateMedian = (grades) => {
@@ -41,8 +39,7 @@ function App() {
     if (!grades.length) return 0;
     const mean = calculateMean(grades);
     const variance =
-      grades.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) /
-      grades.length;
+      grades.reduce((acc, val) => acc + Math.pow(val - mean, 2), 0) / grades.length;
     return Math.sqrt(variance).toFixed(2);
   };
 
@@ -51,7 +48,6 @@ function App() {
     const frequency = {};
     let maxFreq = 0;
     let mode = null;
-
     grades.forEach((grade) => {
       frequency[grade] = (frequency[grade] || 0) + 1;
       if (frequency[grade] > maxFreq) {
@@ -59,7 +55,6 @@ function App() {
         mode = grade;
       }
     });
-
     return mode;
   };
 
@@ -73,23 +68,18 @@ function App() {
       const sheet = workbook.Sheets[workbook.SheetNames[0]];
       const parsedData = XLSX.utils.sheet_to_json(sheet);
       const newGrades = {};
-
       parsedData.forEach((row) => {
         const { Classe, Nome, ...rest } = row;
         if (!Nome || !Classe) return;
-
         const fullName = Nome.trim();
-
         if (!newGrades[Classe]) newGrades[Classe] = {};
         if (!newGrades[Classe][fullName]) newGrades[Classe][fullName] = [];
-
         for (let key in rest) {
           if (key.startsWith("Voto")) {
             const index = key.replace("Voto", "");
             const voto = rest[key];
             const data = rest[`Data${index}`];
             const tipo = rest[`Tipo${index}`];
-
             if (voto && data && tipo) {
               newGrades[Classe][fullName].push({
                 Nome: fullName,
@@ -101,7 +91,6 @@ function App() {
           }
         }
       });
-
       setGrades(newGrades);
     };
     reader.readAsArrayBuffer(file);
@@ -111,7 +100,6 @@ function App() {
     const searchLower = search.trim().toLowerCase();
     let foundStudent = null;
     let foundClass = null;
-
     Object.entries(grades).forEach(([classe, studenti]) => {
       if (classe.toLowerCase().includes(searchLower)) {
         foundClass = classe;
@@ -123,7 +111,6 @@ function App() {
         }
       });
     });
-
     if (foundStudent) {
       setSelectedStudent(foundStudent);
       setSelectedClass(foundClass);
@@ -137,37 +124,24 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white/95 backdrop-blur-xl border-b border-gray-200/60">
-        <div className="max-w-5xl mx-auto px-6 py-5">
-          <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-4">
-              <img src={logo} className="w-10 h-10 opacity-80" alt="logo ClassMetrics" />
-              <div>
-                <p className="text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-gray-400">Analisi statistica</p>
-                <h1 className="text-lg font-semibold text-gray-900 tracking-tight">ClassMetrics</h1>
-              </div>
-            </div>
-            <p className="hidden sm:block text-[0.55rem] text-gray-300 uppercase tracking-[0.25em]">giusepperubino.eu</p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end">
-            <FileUploader handleFileUpload={handleFileUpload} />
-            <SearchBar
-              search={search}
-              setSearch={setSearch}
-              handleSearch={handleSearch}
-              suggestions={[
-                ...Object.keys(grades),
-                ...Object.values(grades).flatMap((cls) => Object.keys(cls)),
-              ]}
-            />
-          </div>
-        </div>
-      </header>
+    <div style={{
+      minHeight: '100vh',
+      background: 'var(--bg)',
+      display: 'flex',
+      flexDirection: 'column',
+    }}>
+      <Header
+        onUpload={handleFileUpload}
+        onSearch={handleSearch}
+        search={search}
+        setSearch={setSearch}
+        suggestions={[
+          ...Object.keys(grades),
+          ...Object.values(grades).flatMap((cls) => Object.keys(cls)),
+        ]}
+      />
 
-      {/* Main content */}
-      <main className="max-w-5xl mx-auto px-6 py-8">
+      <main style={{ maxWidth: '64rem', margin: '0 auto', padding: '2rem 1.5rem', flex: 1, width: '100%', boxSizing: 'border-box' }}>
         <div ref={tableRef}>
           {selectedClass && !selectedStudent && (
             <ClassIndex grades={grades[selectedClass]} className={selectedClass} />
@@ -189,10 +163,10 @@ function App() {
                   classGrades={Object.values(grades[selectedClass]).flat()}
                 />
                 <StudentProfile
-                  mean={calculateMean(grades[selectedClass][selectedStudent].map((entry) => entry.Voto))}
-                  median={calculateMedian(grades[selectedClass][selectedStudent].map((entry) => entry.Voto))}
-                  standardDeviation={calculateStandardDeviation(grades[selectedClass][selectedStudent].map((entry) => entry.Voto))}
-                  mode={calculateMode(grades[selectedClass][selectedStudent].map((entry) => entry.Voto))}
+                  mean={calculateMean(grades[selectedClass][selectedStudent].map((e) => e.Voto))}
+                  median={calculateMedian(grades[selectedClass][selectedStudent].map((e) => e.Voto))}
+                  standardDeviation={calculateStandardDeviation(grades[selectedClass][selectedStudent].map((e) => e.Voto))}
+                  mode={calculateMode(grades[selectedClass][selectedStudent].map((e) => e.Voto))}
                   profiles={profiles}
                 />
               </div>
@@ -201,24 +175,32 @@ function App() {
           )}
 
           {!selectedClass && !selectedStudent && search !== "" && (
-            <p className="text-sm text-red-400 mt-4">Nessun risultato trovato.</p>
+            <p style={{ fontSize: '0.875rem', color: '#ef4444', marginTop: '1rem' }}>
+              {t('app.noResults', 'No results found.')}
+            </p>
           )}
 
           {!selectedClass && !selectedStudent && search === "" && Object.keys(grades).length === 0 && (
-            <div className="text-center py-20">
-              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-gray-400 mb-2">Inizia</p>
-              <p className="text-sm text-gray-500">Carica un file Excel per visualizzare le statistiche della classe</p>
+            <div style={{ textAlign: 'center', paddingTop: '5rem', paddingBottom: '5rem' }}>
+              <p style={{
+                fontSize: '0.65rem',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.25em',
+                color: 'var(--text-faint)',
+                marginBottom: '0.5rem',
+              }}>
+                {t('app.empty.title', 'Get started')}
+              </p>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                {t('app.empty.desc', 'Upload an Excel file to view class statistics')}
+              </p>
             </div>
           )}
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-100 mt-16 py-6">
-        <p className="text-center text-[0.55rem] text-gray-300 uppercase tracking-[0.3em]">
-          © Giuseppe Rubino — giusepperubino.eu — @giusepperubino.eu
-        </p>
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -1,6 +1,5 @@
 import React from "react";
 
-// Funzioni per calcolare le statistiche
 const calculateMean = (grades) => {
   if (!grades.length) return 0;
   return (grades.reduce((acc, val) => acc + val, 0) / grades.length).toFixed(2);
@@ -24,26 +23,49 @@ const calculateMode = (grades) => {
   if (!grades.length) return 0;
   const frequency = {};
   let maxFreq = 0;
-
   grades.forEach((grade) => {
     frequency[grade] = (frequency[grade] || 0) + 1;
     maxFreq = Math.max(maxFreq, frequency[grade]);
   });
-
   const modes = Object.keys(frequency)
     .filter((key) => frequency[key] === maxFreq)
-    .map(Number); // Converte le chiavi in numeri
-
-  return modes.length === grades.length ? 0 : modes; // Se ogni numero è unico, non c'è moda
+    .map(Number);
+  return modes.length === grades.length ? 0 : modes;
 };
-
 
 function StatItem({ title, individualValue, classValue, tooltipText }) {
   return (
-    <div className="bg-white border border-gray-200/60 rounded-2xl p-4 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 hover:shadow-[0_12px_40px_-12px_rgba(0,0,0,0.12)] transition-all duration-200" title={tooltipText}>
-      <p className="text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-gray-400 mb-2">{title}</p>
-      <p className="text-xl font-semibold text-gray-900">{individualValue}</p>
-      <p className="text-xs text-gray-400 mt-1">{classValue}</p>
+    <div
+      title={tooltipText}
+      style={{
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border)',
+        borderRadius: 'var(--radius-lg)',
+        padding: '1rem',
+        boxShadow: 'var(--shadow-md)',
+        transition: 'transform 0.2s, box-shadow 0.2s',
+      }}
+      onMouseEnter={e => {
+        e.currentTarget.style.transform = 'translateY(-2px)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.transform = 'translateY(0)';
+        e.currentTarget.style.boxShadow = 'var(--shadow-md)';
+      }}
+    >
+      <p style={{
+        fontSize: '0.6rem', fontWeight: 600, textTransform: 'uppercase',
+        letterSpacing: '0.25em', color: 'var(--text-faint)', marginBottom: '0.5rem',
+      }}>
+        {title}
+      </p>
+      <p style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text)', margin: 0 }}>
+        {individualValue}
+      </p>
+      <p style={{ fontSize: '0.75rem', color: 'var(--text-faint)', marginTop: '0.25rem' }}>
+        {classValue}
+      </p>
     </div>
   );
 }
@@ -63,8 +85,20 @@ export default function StudentStats({ studentGrades, classGrades }) {
   const classStandardDeviation = calculateStandardDeviation(classScores);
 
   return (
-    <div className="mt-6 bg-gray-50 border border-gray-200/60 rounded-2xl p-6 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)]">
-      <p className="text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-gray-400 mb-4">Statistiche studente</p>
+    <div style={{
+      marginTop: '1.5rem',
+      background: 'var(--bg-subtle)',
+      border: '1px solid var(--border)',
+      borderRadius: 'var(--radius-lg)',
+      padding: '1.5rem',
+      boxShadow: 'var(--shadow-md)',
+    }}>
+      <p style={{
+        fontSize: '0.6rem', fontWeight: 600, textTransform: 'uppercase',
+        letterSpacing: '0.25em', color: 'var(--text-faint)', marginBottom: '1rem',
+      }}>
+        Statistiche studente
+      </p>
       <div className="grid grid-cols-2 gap-3">
         <StatItem
           title="Media"

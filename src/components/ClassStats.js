@@ -21,9 +21,34 @@ export default function ClassStats({ stats }) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-5">
       {items.map(({ label, value }) => (
-        <div key={label} className="bg-white border border-gray-200/60 rounded-2xl p-5 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 hover:shadow-[0_12px_40px_-12px_rgba(0,0,0,0.12)] transition-all duration-200">
-          <p className="text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-gray-400 mb-2">{label}</p>
-          <p className="text-xl font-semibold text-gray-900">{value}</p>
+        <div
+          key={label}
+          style={{
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border)',
+            borderRadius: 'var(--radius-lg)',
+            padding: '1.25rem',
+            boxShadow: 'var(--shadow-md)',
+            transition: 'transform 0.2s, box-shadow 0.2s',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.transform = 'translateY(-2px)';
+            e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = 'var(--shadow-md)';
+          }}
+        >
+          <p style={{
+            fontSize: '0.6rem', fontWeight: 600, textTransform: 'uppercase',
+            letterSpacing: '0.25em', color: 'var(--text-faint)', marginBottom: '0.5rem',
+          }}>
+            {label}
+          </p>
+          <p style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text)', margin: 0 }}>
+            {value}
+          </p>
         </div>
       ))}
     </div>

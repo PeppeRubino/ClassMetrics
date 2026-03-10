@@ -2,9 +2,11 @@
 import { useEffect, useState, useRef } from "react";
 import DownloadPDFButton from "./DownloadPDFButton";
 import ClassCharts from "./ClassCharts";
-import StudentStatistics from "./ClassStats"; // Importiamo il nuovo componente
+import StudentStatistics from "./ClassStats";
+import { useTheme } from "../context/ThemeContext";
 
 export default function ClassTable({ grades, className }) {
+  const { theme } = useTheme();
   const [stats, setStats] = useState({
     avg: 0,
     median: 0,
@@ -23,6 +25,14 @@ export default function ClassTable({ grades, className }) {
   const [allGrades, setAllGrades] = useState([]);
   const tableRef = useRef(null);
 
+  // Chart colors — responsive to dark/light theme
+  const isDark = theme === 'dark';
+  const c1 = isDark ? 'rgba(241,245,249,0.7)'  : 'rgba(55,65,81,0.35)';
+  const c1b = isDark ? 'rgba(241,245,249,0.9)'  : 'rgba(55,65,81,0.8)';
+  const c2 = isDark ? 'rgba(148,163,184,0.5)'  : 'rgba(156,163,175,0.35)';
+  const c2b = isDark ? 'rgba(148,163,184,0.8)'  : 'rgba(156,163,175,0.8)';
+  const gaussLine = isDark ? 'rgba(148,163,184,1)' : 'rgba(156,163,175,1)';
+
   useEffect(() => {
     const gradesArray = Object.values(grades)
       .flat()
@@ -35,7 +45,6 @@ export default function ClassTable({ grades, className }) {
 
     setAllGrades(gradesArray);
 
-    // Calcolo delle statistiche
     const avg =
       gradesArray.reduce((sum, g) => sum + g.grade, 0) / gradesArray.length ||
       0;
@@ -47,23 +56,22 @@ export default function ClassTable({ grades, className }) {
           2
         : sorted[Math.floor(sorted.length / 2)].grade;
 
-        const stdDev = gradesArray.length
-        ? Math.sqrt(
-            gradesArray.reduce((sum, g) => sum + Math.pow(g.grade - avg, 2), 0) /
-            gradesArray.length
-          )
-        : 0;
-     
-        const freqMap = gradesArray.reduce((acc, g) => {
-          acc[g.grade] = (acc[g.grade] || 0) + 1;
-          return acc;
-        }, {});
-        
-        const maxFreq = Math.max(...Object.values(freqMap), 0);
-        const mode = Object.keys(freqMap)
-          .filter((key) => freqMap[key] === maxFreq)
-          .map(Number); // Converte in numeri
-        
+    const stdDev = gradesArray.length
+      ? Math.sqrt(
+          gradesArray.reduce((sum, g) => sum + Math.pow(g.grade - avg, 2), 0) /
+          gradesArray.length
+        )
+      : 0;
+
+    const freqMap = gradesArray.reduce((acc, g) => {
+      acc[g.grade] = (acc[g.grade] || 0) + 1;
+      return acc;
+    }, {});
+
+    const maxFreq = Math.max(...Object.values(freqMap), 0);
+    const mode = Object.keys(freqMap)
+      .filter((key) => freqMap[key] === maxFreq)
+      .map(Number);
 
     const dist = new Array(10).fill(0);
     gradesArray.forEach((g) => {
@@ -78,7 +86,6 @@ export default function ClassTable({ grades, className }) {
     const maxDetails = gradesArray.find((g) => g.grade === maxGrade);
     const minDetails = gradesArray.find((g) => g.grade === minGrade);
 
-    // Calcolo dei migliori e peggiori studenti
     const studentAverages = gradesArray.reduce((acc, g) => {
       if (!acc[g.name]) acc[g.name] = { sum: 0, count: 0 };
       acc[g.name].sum += g.grade;
@@ -109,7 +116,6 @@ export default function ClassTable({ grades, className }) {
       worstStudents,
     });
   }, [grades]);
-  
 
   const gradeDistData = {
     labels: Array.from({ length: 10 }, (_, i) => `${i + 1}`),
@@ -117,8 +123,8 @@ export default function ClassTable({ grades, className }) {
       {
         label: "Distribuzione dei Voti",
         data: stats.gradeDist,
-        backgroundColor: "rgba(55, 65, 81, 0.35)",
-        borderColor: "rgba(55, 65, 81, 0.8)",
+        backgroundColor: c1,
+        borderColor: c1b,
         borderWidth: 1,
       },
     ],
@@ -130,8 +136,8 @@ export default function ClassTable({ grades, className }) {
       {
         label: "Tipologia Esame",
         data: [stats.oralVsWritten.oral, stats.oralVsWritten.written],
-        backgroundColor: ["rgba(55, 65, 81, 0.35)", "rgba(156, 163, 175, 0.35)"],
-        borderColor: ["rgba(55, 65, 81, 0.8)", "rgba(156, 163, 175, 0.8)"],
+        backgroundColor: [c1, c2],
+        borderColor: [c1b, c2b],
         borderWidth: 1,
       },
     ],
@@ -143,8 +149,8 @@ export default function ClassTable({ grades, className }) {
       {
         label: "Estremo",
         data: [stats.maxGrade, stats.minGrade],
-        backgroundColor: ["rgba(55, 65, 81, 0.35)", "rgba(209, 213, 219, 0.5)"],
-        borderColor: ["rgba(55, 65, 81, 0.8)", "rgba(209, 213, 219, 0.8)"],
+        backgroundColor: [c1, c2],
+        borderColor: [c1b, c2b],
         borderWidth: 1,
       },
     ],
@@ -156,8 +162,8 @@ export default function ClassTable({ grades, className }) {
       {
         label: "Voti della Classe",
         data: stats.gradeDist,
-        backgroundColor: "rgba(55, 65, 81, 0.15)",
-        borderColor: "rgba(55, 65, 81, 0.8)",
+        backgroundColor: isDark ? 'rgba(241,245,249,0.1)' : 'rgba(55,65,81,0.15)',
+        borderColor: c1b,
         borderWidth: 1,
         fill: false,
         tension: 0.4,
@@ -169,7 +175,7 @@ export default function ClassTable({ grades, className }) {
             Math.exp(-0.5 * Math.pow((i + 1 - stats.avg) / stats.stdDev, 2)) /
             (stats.stdDev * Math.sqrt(2 * Math.PI))
         ),
-        borderColor: "rgba(156, 163, 175, 1)",
+        borderColor: gaussLine,
         borderWidth: 2,
         fill: false,
         tension: 0.4,
@@ -185,46 +191,68 @@ export default function ClassTable({ grades, className }) {
         data: stats.gradeDist.map(
           (value) => (value / stats.gradeDist.reduce((a, b) => a + b, 0)) * 100
         ),
-        backgroundColor: [
-          "rgba(17, 24, 39, 0.65)",   // 1 — gray-900
-          "rgba(31, 41, 55, 0.60)",   // 2 — gray-800
-          "rgba(55, 65, 81, 0.55)",   // 3 — gray-700
-          "rgba(75, 85, 99, 0.50)",   // 4 — gray-600
-          "rgba(107, 114, 128, 0.45)",// 5 — gray-500
-          "rgba(156, 163, 175, 0.45)",// 6 — gray-400
-          "rgba(156, 163, 175, 0.35)",// 7 — gray-400 lighter
-          "rgba(209, 213, 219, 0.45)",// 8 — gray-300
-          "rgba(229, 231, 235, 0.50)",// 9 — gray-200
-          "rgba(243, 244, 246, 0.55)",// 10 — gray-100
-        ],
-        borderColor: [
-          "rgba(17, 24, 39, 1)",      // 1
-          "rgba(31, 41, 55, 1)",      // 2
-          "rgba(55, 65, 81, 1)",      // 3
-          "rgba(75, 85, 99, 1)",      // 4
-          "rgba(107, 114, 128, 1)",   // 5
-          "rgba(156, 163, 175, 1)",   // 6
-          "rgba(156, 163, 175, 0.8)", // 7
-          "rgba(209, 213, 219, 1)",   // 8
-          "rgba(229, 231, 235, 1)",   // 9
-          "rgba(243, 244, 246, 1)",   // 10
-        ],
+        backgroundColor: isDark
+          ? [
+              "rgba(241,245,249,0.65)",
+              "rgba(226,232,240,0.60)",
+              "rgba(203,213,225,0.55)",
+              "rgba(148,163,184,0.50)",
+              "rgba(100,116,139,0.45)",
+              "rgba(71,85,105,0.45)",
+              "rgba(51,65,85,0.35)",
+              "rgba(30,41,59,0.45)",
+              "rgba(15,23,42,0.50)",
+              "rgba(10,15,26,0.55)",
+            ]
+          : [
+              "rgba(17,24,39,0.65)",
+              "rgba(31,41,55,0.60)",
+              "rgba(55,65,81,0.55)",
+              "rgba(75,85,99,0.50)",
+              "rgba(107,114,128,0.45)",
+              "rgba(156,163,175,0.45)",
+              "rgba(156,163,175,0.35)",
+              "rgba(209,213,219,0.45)",
+              "rgba(229,231,235,0.50)",
+              "rgba(243,244,246,0.55)",
+            ],
+        borderColor: isDark
+          ? [
+              "rgba(241,245,249,1)",
+              "rgba(226,232,240,1)",
+              "rgba(203,213,225,1)",
+              "rgba(148,163,184,1)",
+              "rgba(100,116,139,1)",
+              "rgba(71,85,105,1)",
+              "rgba(51,65,85,1)",
+              "rgba(30,41,59,1)",
+              "rgba(15,23,42,1)",
+              "rgba(10,15,26,1)",
+            ]
+          : [
+              "rgba(17,24,39,1)",
+              "rgba(31,41,55,1)",
+              "rgba(55,65,81,1)",
+              "rgba(75,85,99,1)",
+              "rgba(107,114,128,1)",
+              "rgba(156,163,175,1)",
+              "rgba(156,163,175,0.8)",
+              "rgba(209,213,219,1)",
+              "rgba(229,231,235,1)",
+              "rgba(243,244,246,1)",
+            ],
         borderWidth: 1,
       },
     ],
   };
 
-
   const formatDate = (input) => {
     let date;
-  
     if (typeof input === 'number') {
-      // Gestisce il formato numerico di Excel
       const excelBaseDate = new Date(1900, 0, 1);
       const correctedTimestamp = new Date(excelBaseDate.getTime() + (input - 2) * 86400000);
       date = correctedTimestamp;
     } else if (typeof input === 'string') {
-      // Gestisce il formato 'dd/MM/yyyy'
       const parts = input.split('/');
       if (parts.length === 3) {
         const day = parseInt(parts[0], 10);
@@ -237,34 +265,27 @@ export default function ClassTable({ grades, className }) {
     } else if (input instanceof Date) {
       date = input;
     } else {
-      return null; // Restituisce null se la data è invalida
+      return null;
     }
-  
     if (isNaN(date.getTime())) {
       console.log("Data non valida per:", input);
-      return null; // Data non valida
+      return null;
     }
-  
-    return date; // Restituisce un oggetto Date
+    return date;
   };
-  
+
   const scatterPlotData = {
     datasets: [
       {
         label: "Profilo",
         data: [
-          // Punto fittizio all'inizio (settembre 2024)
           { x: new Date('2024-09-01T00:00:00'), y: null, hidden: true },
-          // Punto fittizio alla fine (giugno 2025)
           { x: new Date('2025-06-30T23:59:59'), y: null, hidden: true },
-          // Dati reali
           ...allGrades.map((g) => {
             const date = formatDate(g.date);
-            
             if (!date) {
               return { x: null, y: g.grade, tooltipData: `Nome: ${g.name} - Data: Non valida - Voto: ${g.grade}` };
             }
-  
             return {
               x: date,
               y: g.grade,
@@ -272,27 +293,37 @@ export default function ClassTable({ grades, className }) {
             };
           }),
         ],
-        backgroundColor: "rgba(55, 65, 81, 0.8)",
-        borderColor: "rgba(55, 65, 81, 1)",
+        backgroundColor: c1b,
+        borderColor: c1b,
         pointRadius: 4,
         pointHoverRadius: 7,
       },
     ],
   };
-  
-  
-  
-  
-  
 
   return (
-    
     <div
       ref={tableRef}
-      className="p-6 bg-white border border-gray-200/60 rounded-2xl shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)]"
+      style={{
+        padding: '1.5rem',
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border)',
+        borderRadius: 'var(--radius-lg)',
+        boxShadow: 'var(--shadow-md)',
+      }}
     >
       <div className="flex justify-center">
-        <h1 className="text-lg bg-gray-900 font-semibold mb-6 text-white text-center rounded-xl px-6 py-3 shadow-sm">
+        <h1 style={{
+          fontSize: '1rem',
+          fontWeight: 600,
+          marginBottom: '1.5rem',
+          background: 'var(--accent)',
+          color: 'var(--accent-fg)',
+          textAlign: 'center',
+          borderRadius: 'var(--radius)',
+          padding: '0.5rem 1.5rem',
+          boxShadow: 'var(--shadow-sm)',
+        }}>
           Classe: "{className}"
         </h1>
         <DownloadPDFButton
@@ -300,10 +331,7 @@ export default function ClassTable({ grades, className }) {
           fileName={`Statistiche_${className}`}
         />
       </div>
-      {/* Statistiche */}
-      <StudentStatistics stats={stats} />{" "}
-      {/* Passiamo le statistiche a StudentStatistics */}
-      {/* Grafici */}
+      <StudentStatistics stats={stats} />
       <ClassCharts
         gaussianData={gaussianData}
         gradeDistData={gradeDistData}

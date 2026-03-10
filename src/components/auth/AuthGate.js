@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { supabase, APP_SLUG } from '../../lib/supabase';
 import LoginPage from './LoginPage';
+import { ThemeProvider } from '../../context/ThemeContext';
+import { LanguageProvider } from '../../context/LanguageContext';
 
 const AuthContext = createContext(null);
 
@@ -10,7 +12,7 @@ export function useAuth() {
 
 const PRO_KEY_STORAGE = `${APP_SLUG}_pro_key`;
 
-export function AuthGate({ children }) {
+function AuthGateInner({ children }) {
   const [session, setSession] = useState(undefined);
   const [isPro, setIsPro] = useState(false);
   const [proChecked, setProChecked] = useState(false);
@@ -32,6 +34,7 @@ export function AuthGate({ children }) {
   useEffect(() => {
     if (!session) return;
     checkProStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
   async function checkProStatus() {
@@ -65,8 +68,21 @@ export function AuthGate({ children }) {
 
   if (session === undefined) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <p className="text-[0.6rem] text-gray-400 uppercase tracking-[0.3em]">Caricamento…</p>
+      <div style={{
+        display: 'flex',
+        minHeight: '100vh',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'var(--bg)',
+      }}>
+        <p style={{
+          fontSize: '0.6rem',
+          color: 'var(--text-faint)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.3em',
+        }}>
+          Caricamento…
+        </p>
       </div>
     );
   }
@@ -79,5 +95,17 @@ export function AuthGate({ children }) {
     <AuthContext.Provider value={{ session, user: session.user, isPro, proChecked, redeemKey, signOut }}>
       {children}
     </AuthContext.Provider>
+  );
+}
+
+export function AuthGate({ children }) {
+  return (
+    <ThemeProvider>
+      <LanguageProvider>
+        <AuthGateInner>
+          {children}
+        </AuthGateInner>
+      </LanguageProvider>
+    </ThemeProvider>
   );
 }

@@ -2,53 +2,82 @@ import React from "react";
 
 const parseDate = (date) => {
   if (typeof date === "number") {
-    // Converti il numero in una data partendo dal 1 gennaio 1900 (epoca Excel)
-    const excelEpoch = new Date(1900, 0, 1); // 1 gennaio 1900
-    const convertedDate = new Date(excelEpoch.setDate(excelEpoch.getDate() + date - 2)); // -2 perché Excel considera il 1900 come anno bisestile
-
+    const excelEpoch = new Date(1900, 0, 1);
+    const convertedDate = new Date(excelEpoch.setDate(excelEpoch.getDate() + date - 2));
     const day = String(convertedDate.getDate()).padStart(2, "0");
     const month = String(convertedDate.getMonth() + 1).padStart(2, "0");
     const year = convertedDate.getFullYear();
     return `${day}/${month}/${year}`;
   } else if (typeof date === "string") {
-    // Se è una stringa "gg/mm/yyyy"
-    return date; // La stringa è già nel formato corretto
+    return date;
   } else if (date instanceof Date) {
-    // Se è un oggetto Date
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   }
-  return ""; // Caso di errore
+  return "";
 };
-
 
 export default function StudentTable({ grades }) {
   return (
-    <div className="mt-8">
-      <p className="text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-gray-400 mb-3">Registro voti</p>
-      <div className="overflow-x-auto rounded-2xl border border-gray-200/60 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)]">
-        <table className="min-w-full table-auto">
+    <div style={{ marginTop: '2rem' }}>
+      <p style={{
+        fontSize: '0.6rem', fontWeight: 600, textTransform: 'uppercase',
+        letterSpacing: '0.25em', color: 'var(--text-faint)', marginBottom: '0.75rem',
+      }}>
+        Registro voti
+      </p>
+      <div style={{
+        overflowX: 'auto',
+        borderRadius: 'var(--radius-lg)',
+        border: '1px solid var(--border)',
+        boxShadow: 'var(--shadow-md)',
+      }}>
+        <table style={{ minWidth: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-100">
-              <th className="px-4 py-3 text-left text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-gray-400">Voto</th>
-              <th className="px-4 py-3 text-left text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-gray-400">Data</th>
-              <th className="px-4 py-3 text-left text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-gray-400">Tipo</th>
+            <tr style={{ background: 'var(--bg-subtle)', borderBottom: '1px solid var(--border)' }}>
+              {['Voto', 'Data', 'Tipo'].map(col => (
+                <th key={col} style={{
+                  padding: '0.75rem 1rem',
+                  textAlign: 'left',
+                  fontSize: '0.6rem',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.25em',
+                  color: 'var(--text-faint)',
+                }}>
+                  {col}
+                </th>
+              ))}
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-gray-50">
+          <tbody style={{ background: 'var(--bg-card)' }}>
             {Array.isArray(grades) ? (
               grades.map((grade, index) => (
-                <tr key={index} className="hover:bg-gray-50 transition-colors duration-200">
-                  <td className="px-4 py-2.5 text-sm font-medium text-gray-900">{grade.Voto}</td>
-                  <td className="px-4 py-2.5 text-sm text-gray-600">{parseDate(grade.Data)}</td>
-                  <td className="px-4 py-2.5 text-sm text-gray-600">{grade.Tipo}</td>
+                <tr
+                  key={index}
+                  style={{
+                    borderBottom: '1px solid var(--border)',
+                    transition: 'background 0.15s',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-subtle)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'var(--bg-card)'}
+                >
+                  <td style={{ padding: '0.625rem 1rem', fontSize: '0.875rem', fontWeight: 500, color: 'var(--text)' }}>
+                    {grade.Voto}
+                  </td>
+                  <td style={{ padding: '0.625rem 1rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                    {parseDate(grade.Data)}
+                  </td>
+                  <td style={{ padding: '0.625rem 1rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                    {grade.Tipo}
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="3" className="px-4 py-4 text-sm text-gray-400 text-center">
+                <td colSpan="3" style={{ padding: '1rem', fontSize: '0.875rem', color: 'var(--text-faint)', textAlign: 'center' }}>
                   Nessun voto disponibile
                 </td>
               </tr>

@@ -10,8 +10,8 @@ import {
   Dot,
   ReferenceLine,
 } from "recharts";
+import { useTheme } from "../context/ThemeContext";
 
-// Funzione per generare i mesi da settembre a giugno
 function generateSchoolYearDates() {
   const months = ["09", "10", "11", "12", "01", "02", "03", "04", "05", "06"];
   const currentYear = new Date().getFullYear();
@@ -21,49 +21,39 @@ function generateSchoolYearDates() {
   });
 }
 
-
 function convertExcelDate(excelSerial) {
-  const baseDate = new Date(1899, 11, 30); // Excel inizia dal 30 dicembre 1899
+  const baseDate = new Date(1899, 11, 30);
   const date = new Date(baseDate.getTime() + excelSerial * 86400000);
-  
   const day = date.getDate().toString().padStart(2, "0");
-  const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Mesi da 0 a 11
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
   const year = date.getFullYear();
-
   return { fullDate: `${day}/${month}/${year}`, monthYear: `${month}/${year}` };
 }
 
-
 export default function StudentChart({ grades, studentName }) {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
   const schoolYearDates = generateSchoolYearDates();
   const [selectedMonth, setSelectedMonth] = useState(null);
 
-  // Mappiamo i voti in un dataset per tutti gli esami
   const data = grades.map((grade) => {
     const { fullDate, monthYear } = convertExcelDate(grade.Data);
     return {
       Voto: grade.Voto,
       Tipo: grade.Tipo,
-      monthYear: monthYear, // mm/yyyy
-      Data: fullDate, // dd/mm/yyyy
+      monthYear,
+      Data: fullDate,
     };
   });
-  
+
   const getMonthData = (monthYear) => {
     const [month, year] = monthYear.split("/");
     const daysInMonth = new Date(year, month, 0).getDate();
-
     return Array.from({ length: daysInMonth }, (_, index) => {
       const day = (index + 1).toString().padStart(2, "0");
       const fullDate = `${day}/${month}/${year}`;
-
-      const gradeOrale = data.find((grade) =>
-        grade.Data === fullDate && grade.Tipo === "Orale"
-      );
-      const gradeScritto = data.find((grade) =>
-        grade.Data === fullDate && grade.Tipo === "Scritto"
-      );
-
+      const gradeOrale = data.find((g) => g.Data === fullDate && g.Tipo === "Orale");
+      const gradeScritto = data.find((g) => g.Data === fullDate && g.Tipo === "Scritto");
       return {
         Data: fullDate,
         VotoOrale: gradeOrale ? gradeOrale.Voto : null,
@@ -73,13 +63,8 @@ export default function StudentChart({ grades, studentName }) {
   };
 
   const fullYearData = schoolYearDates.map((date) => {
-    const orale = data.find(
-      (grade) => grade.monthYear === date && grade.Tipo === "Orale"
-    );
-    const scritto = data.find(
-      (grade) => grade.monthYear === date && grade.Tipo === "Scritto"
-    );
-
+    const orale = data.find((g) => g.monthYear === date && g.Tipo === "Orale");
+    const scritto = data.find((g) => g.monthYear === date && g.Tipo === "Scritto");
     return {
       Data: date,
       VotoOrale: orale ? orale.Voto : null,
@@ -88,142 +73,169 @@ export default function StudentChart({ grades, studentName }) {
   });
 
   const getDotColor = (voto) => {
+    if (isDark) {
+      if (voto >= 1 && voto <= 3) return "#f1f5f9";
+      if (voto >= 4 && voto <= 5) return "#94a3b8";
+      return "#475569";
+    }
     if (voto >= 1 && voto <= 3) return "#111827";
     if (voto >= 4 && voto <= 5) return "#6b7280";
-    if (voto >= 6 && voto <= 10) return "#d1d5db";
+    return "#d1d5db";
   };
 
+  const lineOral = isDark ? "#e2e8f0" : "#374151";
+  const lineWritten = isDark ? "#64748b" : "#9ca3af";
+  const refLine = isDark ? "#334155" : "#d1d5db";
+  const gridColor = isDark ? "rgba(255,255,255,0.06)" : "rgba(0,0,0,0.06)";
+  const axisColor = isDark ? "#475569" : "#9ca3af";
+  const tooltipBg = isDark ? "#1e293b" : "#ffffff";
+  const tooltipBorder = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.08)";
+
   return (
-    <div className="mt-6">
-      <div className="mb-4">
-        <p className="text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-gray-400 mb-1">Andamento voti</p>
-        <h2 className="text-base font-semibold text-gray-900">{studentName}</h2>
+    <div style={{ marginTop: '1.5rem' }}>
+      <div style={{ marginBottom: '1rem' }}>
+        <p style={{
+          fontSize: '0.6rem', fontWeight: 600, textTransform: 'uppercase',
+          letterSpacing: '0.25em', color: 'var(--text-faint)', marginBottom: '2px',
+        }}>
+          Andamento voti
+        </p>
+        <h2 style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--text)', margin: 0 }}>
+          {studentName}
+        </h2>
       </div>
 
-      <div className="mb-4 flex items-center justify-end flex-wrap gap-1">
+      {/* Month filter buttons */}
+      <div style={{ marginBottom: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', flexWrap: 'wrap', gap: '0.25rem' }}>
         {schoolYearDates.map((month) => (
           <button
             key={month}
             onClick={() => setSelectedMonth(month)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-medium border transition-all duration-200 ${
-              selectedMonth === month
-                ? "bg-gray-900 text-white border-gray-900"
-                : "bg-white text-gray-500 border-gray-200 hover:border-gray-400"
-            }`}
+            style={{
+              padding: '0.375rem 0.75rem',
+              borderRadius: 'var(--radius)',
+              fontSize: '0.75rem',
+              fontWeight: 500,
+              border: '1px solid var(--border)',
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+              fontFamily: 'inherit',
+              background: selectedMonth === month ? 'var(--accent)' : 'var(--bg-subtle)',
+              color: selectedMonth === month ? 'var(--accent-fg)' : 'var(--text-muted)',
+              borderColor: selectedMonth === month ? 'var(--accent)' : 'var(--border)',
+            }}
           >
             {month.split("/")[0]}
           </button>
         ))}
         <button
           onClick={() => setSelectedMonth(null)}
-          className={`px-3 py-1.5 rounded-xl text-xs font-medium border transition-all duration-200 ${
-            selectedMonth === null
-              ? "bg-gray-900 text-white border-gray-900"
-              : "bg-white text-gray-500 border-gray-200 hover:border-gray-400"
-          }`}
+          style={{
+            padding: '0.375rem 0.75rem',
+            borderRadius: 'var(--radius)',
+            fontSize: '0.75rem',
+            fontWeight: 500,
+            border: '1px solid var(--border)',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            fontFamily: 'inherit',
+            background: selectedMonth === null ? 'var(--accent)' : 'var(--bg-subtle)',
+            color: selectedMonth === null ? 'var(--accent-fg)' : 'var(--text-muted)',
+            borderColor: selectedMonth === null ? 'var(--accent)' : 'var(--border)',
+          }}
         >
           Anno
         </button>
       </div>
-  
+
       <ResponsiveContainer width="99%" height={400}>
-        <LineChart
-          data={selectedMonth ? getMonthData(selectedMonth) : fullYearData}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
+        <LineChart data={selectedMonth ? getMonthData(selectedMonth) : fullYearData}>
+          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <XAxis
             dataKey="Data"
             tickFormatter={(tick) => {
               if (selectedMonth) {
-                // Quando è selezionato un mese, mostriamo giorno e mese (dd/mm/yyyy)
                 const [day, month] = tick.split("/");
                 return `${day}/${month}`;
               } else {
-                // Se non è selezionato un mese, mostriamo solo mese e anno (mm/yyyy)
                 const [month, year] = tick.split("/");
                 return `${month}/${year}`;
               }
             }}
-            interval={0} // Mostra ogni tick senza saltare nessuno
-            angle={-15} // Inclina le etichette per evitare sovrapposizioni (opzionale)
-            textAnchor="end" // Allinea meglio le etichette inclinate
+            interval={0}
+            angle={-15}
+            textAnchor="end"
             fontSize="13"
+            stroke={axisColor}
+            tick={{ fill: axisColor }}
           />
-          <YAxis domain={[0, 10]} />
-          <Tooltip />
+          <YAxis domain={[0, 10]} stroke={axisColor} tick={{ fill: axisColor }} />
+          <Tooltip
+            contentStyle={{
+              background: tooltipBg,
+              border: `1px solid ${tooltipBorder}`,
+              borderRadius: '0.5rem',
+              color: isDark ? '#f1f5f9' : '#0f172a',
+              fontSize: '0.8rem',
+            }}
+          />
           <Line
             type="monotone"
             dataKey="VotoOrale"
-            stroke="#374151"
+            stroke={lineOral}
             strokeWidth={2}
             connectNulls={true}
             dot={({ cx, cy, payload }) =>
               payload.VotoOrale !== null && payload.Data ? (
-                <Dot
-                  cx={cx}
-                  cy={cy}
-                  r={6}
-                  fill={getDotColor(payload.VotoOrale)}
-                />
+                <Dot cx={cx} cy={cy} r={6} fill={getDotColor(payload.VotoOrale)} />
               ) : null
             }
           />
           <Line
             type="monotone"
             dataKey="VotoScritto"
-            stroke="#9ca3af"
+            stroke={lineWritten}
             strokeWidth={2}
             connectNulls={true}
             dot={({ cx, cy, payload }) =>
               payload.VotoScritto !== null && payload.Data ? (
-                <Dot
-                  cx={cx}
-                  cy={cy}
-                  r={6}
-                  fill={getDotColor(payload.VotoScritto)}
-                />
+                <Dot cx={cx} cy={cy} r={6} fill={getDotColor(payload.VotoScritto)} />
               ) : null
             }
           />
-          <ReferenceLine
-            y={6}
-            stroke="#d1d5db"
-            strokeWidth={2}
-            strokeDasharray="3 3"
-          />
+          <ReferenceLine y={6} stroke={refLine} strokeWidth={2} strokeDasharray="3 3" />
         </LineChart>
       </ResponsiveContainer>
-  
-      {/* Leggenda */}
-      <div className="mt-8 text-sm">
-        <div className="flex flex-wrap justify-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="inline-block w-4 h-4 rounded-full bg-gray-900"></span>
+
+      {/* Legend */}
+      <div style={{ marginTop: '2rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ display: 'inline-block', width: '1rem', height: '1rem', borderRadius: '50%', background: isDark ? '#f1f5f9' : '#111827' }} />
             <span>Voti bassi (1-3)</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="inline-block w-4 h-4 rounded-full bg-gray-500"></span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ display: 'inline-block', width: '1rem', height: '1rem', borderRadius: '50%', background: isDark ? '#94a3b8' : '#6b7280' }} />
             <span>Voti medi (4-5)</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="inline-block w-4 h-4 rounded-full bg-gray-300"></span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ display: 'inline-block', width: '1rem', height: '1rem', borderRadius: '50%', background: isDark ? '#475569' : '#d1d5db' }} />
             <span>Voti alti (6-10)</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="inline-block w-6 h-1 bg-gray-700"></span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ display: 'inline-block', width: '1.5rem', height: '3px', background: lineOral }} />
             <span>Voto Orale</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="inline-block w-6 h-1 bg-gray-400"></span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ display: 'inline-block', width: '1.5rem', height: '3px', background: lineWritten }} />
             <span>Voto Scritto</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="inline-block w-6 h-1 border-t-2 border-dashed border-gray-300"></span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <span style={{ display: 'inline-block', width: '1.5rem', height: '0', borderTop: `2px dashed ${refLine}` }} />
             <span>Riferimento: Voto 6</span>
           </div>
         </div>
       </div>
     </div>
   );
-  
 }
