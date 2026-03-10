@@ -8,18 +8,18 @@ export default function SearchBar({ search, setSearch, handleSearch }) {
   };
 
   return (
-    <div className="my-4 flex gap-2">
+    <div className="flex gap-2 items-center">
       <input
         type="text"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        onKeyDown={handleKeyDown} // Ascolta il tasto Invio
-        className="border p-2 text-blue-700 text-lg"
-        placeholder="Es. 1A... or Mario..."
+        onKeyDown={handleKeyDown}
+        className="border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-400 transition-colors"
+        placeholder="Classe (1A) o studente..."
       />
-      <button 
-        onClick={handleSearch} 
-        className="bg-blue-600 text-white p-2 ml-3 shadow-md rounded-sm hover:bg-blue-800"
+      <button
+        onClick={handleSearch}
+        className="bg-gray-900 text-white text-xs font-medium px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
       >
         Cerca
       </button>

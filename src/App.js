@@ -136,64 +136,88 @@ export default function App() {
   };
 
   return (
-    <div className="p-6">
-      <div className="bg-gradient-to-r from-blue-500 to-blue-700 text-white p-6 rounded-lg shadow-lg mb-8">
-        <div className="flex justify-center items-center">
-          <img src={logo} className="w-20 h-20" alt="logo ClassMetrics"></img>
-          <h1 className="text-3xl font-bold text-center">ClassMetrics</h1>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-100">
+        <div className="max-w-5xl mx-auto px-6 py-5">
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-4">
+              <img src={logo} className="w-10 h-10 opacity-80" alt="logo ClassMetrics" />
+              <div>
+                <p className="text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-gray-400">Analisi statistica</p>
+                <h1 className="text-lg font-semibold text-gray-900 tracking-tight">ClassMetrics</h1>
+              </div>
+            </div>
+            <p className="hidden sm:block text-[0.55rem] text-gray-300 uppercase tracking-[0.25em]">giusepperubino.eu</p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-end">
+            <FileUploader handleFileUpload={handleFileUpload} />
+            <SearchBar
+              search={search}
+              setSearch={setSearch}
+              handleSearch={handleSearch}
+              suggestions={[
+                ...Object.keys(grades),
+                ...Object.values(grades).flatMap((cls) => Object.keys(cls)),
+              ]}
+            />
+          </div>
         </div>
-        <div className="mb-4 flex gap-4">
-          <FileUploader handleFileUpload={handleFileUpload} />
-          <DownloadFileButton src="/data/file_test.xlsx" label="Scarica file di test" />
-        </div>
-        <div className="mb-4">
-          <SearchBar
-            search={search}
-            setSearch={setSearch}
-            handleSearch={handleSearch}
-            suggestions={[
-              ...Object.keys(grades),
-              ...Object.values(grades).flatMap((cls) => Object.keys(cls)),
-            ]}
-          />
-        </div>
-      </div>
-      <div ref={tableRef} className="p-6 bg-slate-100 rounded-lg shadow-lg shadow-slate-600">
-      {selectedClass && !selectedStudent && (
-        <ClassIndex grades={grades[selectedClass]} className={selectedClass} />
-      )}
+      </header>
 
-{selectedStudent && (
-  <>
-      <DownloadPDFButton
-        targetRef={tableRef}
-        fileName={`Statistiche_${selectedStudent}_${selectedClass}`}
-      />
-      <StudentChart
-        grades={grades[selectedClass][selectedStudent]}
-        studentName={selectedStudent}
-      />
-      <div className="grid grid-cols-2 gap-5">
-        <StudentStats
-          studentGrades={grades[selectedClass][selectedStudent]}
-          classGrades={Object.values(grades[selectedClass]).flat()}
-        />
-        <StudentProfile
-          mean={calculateMean(grades[selectedClass][selectedStudent].map((entry) => entry.Voto))}
-          median={calculateMedian(grades[selectedClass][selectedStudent].map((entry) => entry.Voto))}
-          standardDeviation={calculateStandardDeviation(grades[selectedClass][selectedStudent].map((entry) => entry.Voto))}
-          mode={calculateMode(grades[selectedClass][selectedStudent].map((entry) => entry.Voto))}
-          profiles={profiles}
-        />
-      </div>
-      <StudentTable grades={grades[selectedClass][selectedStudent]} />
-  </>
-)}
- </div>
+      {/* Main content */}
+      <main className="max-w-5xl mx-auto px-6 py-8">
+        <div ref={tableRef}>
+          {selectedClass && !selectedStudent && (
+            <ClassIndex grades={grades[selectedClass]} className={selectedClass} />
+          )}
 
-      {!selectedClass && !selectedStudent && search !== "" && (
-        <p className="text-red-500 mt-4">Nessun risultato trovato.</p>
-      )}
+          {selectedStudent && (
+            <>
+              <DownloadPDFButton
+                targetRef={tableRef}
+                fileName={`Statistiche_${selectedStudent}_${selectedClass}`}
+              />
+              <StudentChart
+                grades={grades[selectedClass][selectedStudent]}
+                studentName={selectedStudent}
+              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
+                <StudentStats
+                  studentGrades={grades[selectedClass][selectedStudent]}
+                  classGrades={Object.values(grades[selectedClass]).flat()}
+                />
+                <StudentProfile
+                  mean={calculateMean(grades[selectedClass][selectedStudent].map((entry) => entry.Voto))}
+                  median={calculateMedian(grades[selectedClass][selectedStudent].map((entry) => entry.Voto))}
+                  standardDeviation={calculateStandardDeviation(grades[selectedClass][selectedStudent].map((entry) => entry.Voto))}
+                  mode={calculateMode(grades[selectedClass][selectedStudent].map((entry) => entry.Voto))}
+                  profiles={profiles}
+                />
+              </div>
+              <StudentTable grades={grades[selectedClass][selectedStudent]} />
+            </>
+          )}
+
+          {!selectedClass && !selectedStudent && search !== "" && (
+            <p className="text-sm text-red-400 mt-4">Nessun risultato trovato.</p>
+          )}
+
+          {!selectedClass && !selectedStudent && search === "" && Object.keys(grades).length === 0 && (
+            <div className="text-center py-20">
+              <p className="text-[0.65rem] font-semibold uppercase tracking-[0.25em] text-gray-400 mb-2">Inizia</p>
+              <p className="text-sm text-gray-500">Carica un file Excel per visualizzare le statistiche della classe</p>
+            </div>
+          )}
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-gray-100 mt-16 py-6">
+        <p className="text-center text-[0.55rem] text-gray-300 uppercase tracking-[0.3em]">
+          © Giuseppe Rubino — giusepperubino.eu — @giusepperubino.eu
+        </p>
+      </footer>
     </div>
   );
 }

@@ -27,28 +27,28 @@ const parseDate = (date) => {
 export default function StudentTable({ grades }) {
   return (
     <div className="mt-8">
-
-      <div className="overflow-x-auto mt-4">
-        <table className="min-w-full table-auto border-collapse border border-gray-300">
+      <p className="text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-gray-400 mb-3">Registro voti</p>
+      <div className="overflow-x-auto rounded-xl border border-gray-100 shadow-sm">
+        <table className="min-w-full table-auto">
           <thead>
-            <tr>
-              <th className="px-4 py-2 border bg-blue-600 text-white">Voto</th>
-              <th className="px-4 py-2 border bg-blue-600 text-white">Data</th>
-              <th className="px-4 py-2 border bg-blue-600 text-white">Tipo</th>
+            <tr className="bg-gray-50 border-b border-gray-100">
+              <th className="px-4 py-3 text-left text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-gray-400">Voto</th>
+              <th className="px-4 py-3 text-left text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-gray-400">Data</th>
+              <th className="px-4 py-3 text-left text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-gray-400">Tipo</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="bg-white divide-y divide-gray-50">
             {Array.isArray(grades) ? (
               grades.map((grade, index) => (
-                <tr key={index}>
-                  <td className="px-4 py-2 border">{grade.Voto}</td>
-                  <td className="px-4 py-2 border">{parseDate(grade.Data)}</td> {/* Usa parseDate per formattare la data */}
-                  <td className="px-4 py-2 border">{grade.Tipo}</td>
+                <tr key={index} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-4 py-2.5 text-sm font-medium text-gray-900">{grade.Voto}</td>
+                  <td className="px-4 py-2.5 text-sm text-gray-600">{parseDate(grade.Data)}</td>
+                  <td className="px-4 py-2.5 text-sm text-gray-600">{grade.Tipo}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="3" className="px-4 py-2 border text-center">
+                <td colSpan="3" className="px-4 py-4 text-sm text-gray-400 text-center">
                   Nessun voto disponibile
                 </td>
               </tr>

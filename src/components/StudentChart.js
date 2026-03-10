@@ -15,12 +15,9 @@ import {
 function generateSchoolYearDates() {
   const months = ["09", "10", "11", "12", "01", "02", "03", "04", "05", "06"];
   const currentYear = new Date().getFullYear();
-  console.log('Anno corrente:', currentYear); // Log per l'anno corrente
   return months.map((month, index) => {
     const year = index < 4 ? currentYear - 1 : currentYear;
-    const monthYear = `${month}/${year}`; // Formato mm/yyyy
-    console.log('Generato mese:', monthYear); // Log per ogni mese generato
-    return monthYear;
+    return `${month}/${year}`;
   });
 }
 
@@ -52,31 +49,20 @@ export default function StudentChart({ grades, studentName }) {
     };
   });
   
-  console.log('Dati dei voti:', data); // Log per verificare i dati di input
-
   const getMonthData = (monthYear) => {
-    console.log('Parsing per mese:', monthYear); // Verifica il mese selezionato
     const [month, year] = monthYear.split("/");
     const daysInMonth = new Date(year, month, 0).getDate();
-    console.log(`Giorni nel mese ${monthYear}:`, daysInMonth); // Verifica quanti giorni ha il mese
 
     return Array.from({ length: daysInMonth }, (_, index) => {
       const day = (index + 1).toString().padStart(2, "0");
       const fullDate = `${day}/${month}/${year}`;
-      console.log('Controllo data:', fullDate); // Verifica la data formattata
 
-      // Confronta la data del file Excel con la data del giorno corrente
-      const gradeOrale = data.find((grade) => 
+      const gradeOrale = data.find((grade) =>
         grade.Data === fullDate && grade.Tipo === "Orale"
       );
-      
-      const gradeScritto = data.find((grade) => 
+      const gradeScritto = data.find((grade) =>
         grade.Data === fullDate && grade.Tipo === "Scritto"
       );
-      
-      
-
-      console.log('Voti trovati per data:', fullDate, 'Orale:', gradeOrale, 'Scritto:', gradeScritto); // Log per i voti trovati
 
       return {
         Data: fullDate,
@@ -94,8 +80,6 @@ export default function StudentChart({ grades, studentName }) {
       (grade) => grade.monthYear === date && grade.Tipo === "Scritto"
     );
 
-    console.log(`Mese: ${date}, Orale: ${orale ? orale.Voto : "N/A"}, Scritto: ${scritto ? scritto.Voto : "N/A"}`); // Log per i voti mensili
-
     return {
       Data: date,
       VotoOrale: orale ? orale.Voto : null,
@@ -110,21 +94,21 @@ export default function StudentChart({ grades, studentName }) {
   };
 
   return (
-    <div>
-      <div className="flex items-center justify-center">
-        <h2 className="text-lg md:text-xl font-bold mb-16 bg-blue-700 text-white px-4 py-4 rounded-md">PROFILO: {studentName}</h2>
+    <div className="mt-6">
+      <div className="mb-4">
+        <p className="text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-gray-400 mb-1">Andamento voti</p>
+        <h2 className="text-base font-semibold text-gray-900">{studentName}</h2>
       </div>
-  
-      <div className="mb-4 flex items-center justify-end flex-wrap">
+
+      <div className="mb-4 flex items-center justify-end flex-wrap gap-1">
         {schoolYearDates.map((month) => (
           <button
             key={month}
-            onClick={() => {
-              console.log("Mese selezionato:", month);  // Aggiungi questa riga
-              setSelectedMonth(month);
-            }}
-            className={`w-10 sm:w-20 md:w-24 lg:w-32 px-4 py-2 ml-2 md:m-2 rounded-lg ${
-              selectedMonth === month ? "bg-blue-500 text-white" : "bg-gray-300"
+            onClick={() => setSelectedMonth(month)}
+            className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-all duration-150 ${
+              selectedMonth === month
+                ? "bg-gray-900 text-white border-gray-900"
+                : "bg-white text-gray-500 border-gray-200 hover:border-gray-400"
             }`}
           >
             {month.split("/")[0]}
@@ -132,9 +116,13 @@ export default function StudentChart({ grades, studentName }) {
         ))}
         <button
           onClick={() => setSelectedMonth(null)}
-          className="px-4 py-2 m-2 rounded-lg bg-gray-300"
+          className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-all duration-150 ${
+            selectedMonth === null
+              ? "bg-gray-900 text-white border-gray-900"
+              : "bg-white text-gray-500 border-gray-200 hover:border-gray-400"
+          }`}
         >
-          Anno scolastico
+          Anno
         </button>
       </div>
   

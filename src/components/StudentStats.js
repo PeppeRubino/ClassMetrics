@@ -38,13 +38,12 @@ const calculateMode = (grades) => {
 };
 
 
-// Componente StatItem
 function StatItem({ title, individualValue, classValue, tooltipText }) {
   return (
-    <div className="p-3 bg-white rounded-lg shadow text-center" title={tooltipText}>
-      <h3 className="text-md font-medium">{title}</h3>
-      <p className="text-lg font-bold text-blue-600">{individualValue}</p>
-      <p className="text-sm text-gray-500">{classValue}</p> {/* Mostra la statistica della classe in grigio e più piccola */}
+    <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm" title={tooltipText}>
+      <p className="text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-gray-400 mb-2">{title}</p>
+      <p className="text-xl font-semibold text-gray-900">{individualValue}</p>
+      <p className="text-xs text-gray-400 mt-1">{classValue}</p>
     </div>
   );
 }
@@ -53,50 +52,45 @@ export default function StudentStats({ studentGrades, classGrades }) {
   const studentScores = studentGrades.map((entry) => entry.Voto);
   const classScores = classGrades.map((entry) => entry.Voto);
 
-  // Calcoli statistici per lo studente
   const mean = calculateMean(studentScores);
   const mode = calculateMode(studentScores);
   const median = calculateMedian(studentScores);
   const standardDeviation = calculateStandardDeviation(studentScores);
 
-  // Calcoli statistici per la classe
   const classMean = calculateMean(classScores);
   const classMode = calculateMode(classScores);
   const classMedian = calculateMedian(classScores);
   const classStandardDeviation = calculateStandardDeviation(classScores);
 
   return (
-    <div className="mt-6 p-6 bg-blue-600 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold text- text-white text-center">⚙️ Stats</h2>
-      <div className="grid  grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-        <StatItem 
-          title="Media" 
-          individualValue={mean} 
-          classValue={`Classe: ${classMean}`} 
+    <div className="mt-6 bg-gray-50 border border-gray-100 rounded-xl p-6">
+      <p className="text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-gray-400 mb-4">Statistiche studente</p>
+      <div className="grid grid-cols-2 gap-3">
+        <StatItem
+          title="Media"
+          individualValue={mean}
+          classValue={`Classe: ${classMean}`}
           tooltipText="La media dei voti dello studente e la media della classe"
         />
-        <StatItem 
-          title="Mediana" 
-          individualValue={median} 
-          classValue={`Classe: ${classMedian}`} 
-          tooltipText="Il voto centrale tra i voti ordinati dello studente e della classe" 
+        <StatItem
+          title="Mediana"
+          individualValue={median}
+          classValue={`Classe: ${classMedian}`}
+          tooltipText="Il voto centrale tra i voti ordinati dello studente e della classe"
         />
-        <StatItem 
-          title="Dev. Standard" 
-          individualValue={standardDeviation} 
-          classValue={`Classe: ${classStandardDeviation}`} 
-          tooltipText="La variabilità dei voti dello studente e della classe (quanto sono altalenanti i voti). Una dev. standard sopra 1.50 può indicarci che siamo davanti a un bravo alunno che sta avendo difficoltà, o viceversa." 
+        <StatItem
+          title="Dev. Standard"
+          individualValue={standardDeviation}
+          classValue={`Classe: ${classStandardDeviation}`}
+          tooltipText="La variabilità dei voti dello studente e della classe"
         />
-     <StatItem 
-  title="Moda" 
-  individualValue={Array.isArray(mode) ? mode.join(", ") : mode} 
-  classValue={`Classe: ${Array.isArray(classMode) ? classMode.join(", ") : classMode}`} 
-  tooltipText="Il voto che appare più frequentemente tra i voti dello studente e della classe" 
-/>
-
+        <StatItem
+          title="Moda"
+          individualValue={Array.isArray(mode) ? mode.join(", ") : mode}
+          classValue={`Classe: ${Array.isArray(classMode) ? classMode.join(", ") : classMode}`}
+          tooltipText="Il voto che appare più frequentemente"
+        />
       </div>
-
-  
     </div>
   );
 }

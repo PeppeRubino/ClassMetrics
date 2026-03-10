@@ -47,8 +47,7 @@ export default function FileUploader({ handleFileUpload }) {
   };
 
   return (
-    <div className="my-4 flex">
-      {/* Input file nascosto */}
+    <div className="flex items-center gap-3">
       <input
         type="file"
         accept=".xlsx, .xls, .ods"
@@ -56,28 +55,20 @@ export default function FileUploader({ handleFileUpload }) {
         className="hidden"
         id="file-upload"
       />
-      
-      {/* Etichetta personalizzata per l'input file */}
       <label
         htmlFor="file-upload"
-        className="cursor-pointer bg-blue-600 text-white p-2 rounded-lg shadow-md hover:bg-blue-800 transition-colors"
+        className="cursor-pointer inline-flex items-center gap-2 bg-gray-900 text-white text-xs font-medium tracking-wide px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
       >
-        Carica un file
+        Carica file Excel
+        {fileStatus === true && <FaCheckCircle className="text-green-400 text-sm" />}
+        {fileStatus === false && <FaTimesCircle className="text-red-400 text-sm" />}
       </label>
-
-      {/* Bottone per caricare automaticamente il file di test */}
       <button
         onClick={handleTestFileUpload}
-        className="ml-4 cursor-pointer bg-green-600 text-white p-2 rounded-lg shadow-md hover:bg-green-800 transition-colors"
+        className="inline-flex items-center text-xs text-gray-400 hover:text-gray-600 underline underline-offset-2 transition-colors"
       >
-        Carica file test.xlsx
+        Usa file di test
       </button>
-
-      {/* Icona di stato del file */}
-      <div className="mt-2">
-        {fileStatus === true && <FaCheckCircle className="text-green-500 text-2xl absolute ml-5 shadow" />}
-        {fileStatus === false && <FaTimesCircle className="text-red-500 text-2xl absolute ml-5 shadow" />}
-      </div>
     </div>
   );
 }
