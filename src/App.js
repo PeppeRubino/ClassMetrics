@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { AuthGate } from "./components/auth/AuthGate";
 import FileUploader from "./components/FileUploader";
 import SearchBar from "./components/SearchBar";
 import ClassIndex from "./components/ClassIndex";
@@ -13,7 +14,7 @@ import logo from "./data/logo.png"; // path relativo a App.jsx
 
 import * as XLSX from "xlsx";
 
-export default function App() {
+function App() {
   const [grades, setGrades] = useState({});
   const [search, setSearch] = useState("");
   const [selectedClass, setSelectedClass] = useState(null);
@@ -219,5 +220,13 @@ export default function App() {
         </p>
       </footer>
     </div>
+  );
+}
+
+export default function AppWithAuth() {
+  return (
+    <AuthGate>
+      <App />
+    </AuthGate>
   );
 }
