@@ -117,8 +117,8 @@ export default function ClassTable({ grades, className }) {
       {
         label: "Distribuzione dei Voti",
         data: stats.gradeDist,
-        backgroundColor: "rgba(50, 150, 255, 0.5)",
-        borderColor: "rgba(50, 150, 255, 1)",
+        backgroundColor: "rgba(55, 65, 81, 0.35)",
+        borderColor: "rgba(55, 65, 81, 0.8)",
         borderWidth: 1,
       },
     ],
@@ -130,8 +130,8 @@ export default function ClassTable({ grades, className }) {
       {
         label: "Tipologia Esame",
         data: [stats.oralVsWritten.oral, stats.oralVsWritten.written],
-        backgroundColor: ["rgba(255, 159, 64, 0.5)", "rgba(75, 192, 192, 0.5)"],
-        borderColor: ["rgba(255, 159, 64, 1)", "rgba(75, 192, 192, 1)"],
+        backgroundColor: ["rgba(55, 65, 81, 0.35)", "rgba(156, 163, 175, 0.35)"],
+        borderColor: ["rgba(55, 65, 81, 0.8)", "rgba(156, 163, 175, 0.8)"],
         borderWidth: 1,
       },
     ],
@@ -143,8 +143,8 @@ export default function ClassTable({ grades, className }) {
       {
         label: "Estremo",
         data: [stats.maxGrade, stats.minGrade],
-        backgroundColor: ["rgba(75, 182, 70, 0.5)", "rgba(255, 99, 132, 0.5)"],
-        borderColor: ["rgba(75, 182, 70, 1)", "rgba(255, 99, 132, 1)"],
+        backgroundColor: ["rgba(55, 65, 81, 0.35)", "rgba(209, 213, 219, 0.5)"],
+        borderColor: ["rgba(55, 65, 81, 0.8)", "rgba(209, 213, 219, 0.8)"],
         borderWidth: 1,
       },
     ],
@@ -156,8 +156,8 @@ export default function ClassTable({ grades, className }) {
       {
         label: "Voti della Classe",
         data: stats.gradeDist,
-        backgroundColor: "rgba(50, 150, 255, 0.5)",
-        borderColor: "rgba(50, 150, 255, 1)",
+        backgroundColor: "rgba(55, 65, 81, 0.15)",
+        borderColor: "rgba(55, 65, 81, 0.8)",
         borderWidth: 1,
         fill: false,
         tension: 0.4,
@@ -169,7 +169,7 @@ export default function ClassTable({ grades, className }) {
             Math.exp(-0.5 * Math.pow((i + 1 - stats.avg) / stats.stdDev, 2)) /
             (stats.stdDev * Math.sqrt(2 * Math.PI))
         ),
-        borderColor: "rgba(255, 99, 132, 1)",
+        borderColor: "rgba(156, 163, 175, 1)",
         borderWidth: 2,
         fill: false,
         tension: 0.4,
@@ -186,38 +186,28 @@ export default function ClassTable({ grades, className }) {
           (value) => (value / stats.gradeDist.reduce((a, b) => a + b, 0)) * 100
         ),
         backgroundColor: [
-          // Rosso per i voti bassi (1-4), più scuro man mano che scende
-          "rgba(220, 30, 30, 0.5)", // 1
-          "rgba(240, 69, 69, 0.5)", // 2
-          "rgba(255, 99, 132, 0.5)", // 3
-          "rgba(255, 151, 87, 0.5)", // 4
-
-          // Giallo per i voti medi (7-4), con sfumature
-          "rgba(255, 193, 7, 0.5)", // 5
-          "rgba(34, 139, 34, 0.5)", // 6
-          "rgba(0, 100, 0, 0.5)", // 7
-
-          // Blu per i voti alti (10-8), più scuro man mano che scende
-          "rgba(53, 162, 235, 0.5)", // 8
-          "rgba(38, 139, 227, 0.5)", // 9
-          "rgba(23, 116, 220, 0.5)", // 10
+          "rgba(17, 24, 39, 0.65)",   // 1 — gray-900
+          "rgba(31, 41, 55, 0.60)",   // 2 — gray-800
+          "rgba(55, 65, 81, 0.55)",   // 3 — gray-700
+          "rgba(75, 85, 99, 0.50)",   // 4 — gray-600
+          "rgba(107, 114, 128, 0.45)",// 5 — gray-500
+          "rgba(156, 163, 175, 0.45)",// 6 — gray-400
+          "rgba(156, 163, 175, 0.35)",// 7 — gray-400 lighter
+          "rgba(209, 213, 219, 0.45)",// 8 — gray-300
+          "rgba(229, 231, 235, 0.50)",// 9 — gray-200
+          "rgba(243, 244, 246, 0.55)",// 10 — gray-100
         ],
         borderColor: [
-          // Rosso per i voti bassi (3-1), più scuro man mano che scende
-          "rgba(220, 30, 30, 1)", // 1
-          "rgba(240, 69, 69, 1)", // 2
-          "rgba(255, 99, 132, 1)", // 3
-          "rgba(255, 151, 87, 1)", // 4
-
-          // Giallo per i voti medi (7-4), con sfumature
-          "rgba(255, 193, 7, 1)",  // 5
-          "rgba(34, 139, 34, 0.1)", // 6
-          "rgba(0, 100, 0, 0.1)", // 7
-
-          // Blu per i voti alti (10-8), più scuro man mano che scende
-          "rgba(53, 162, 235, 1)", // 8
-          "rgba(38, 139, 227, 1)", // 9
-          "rgba(23, 116, 220, 1)", // 10
+          "rgba(17, 24, 39, 1)",      // 1
+          "rgba(31, 41, 55, 1)",      // 2
+          "rgba(55, 65, 81, 1)",      // 3
+          "rgba(75, 85, 99, 1)",      // 4
+          "rgba(107, 114, 128, 1)",   // 5
+          "rgba(156, 163, 175, 1)",   // 6
+          "rgba(156, 163, 175, 0.8)", // 7
+          "rgba(209, 213, 219, 1)",   // 8
+          "rgba(229, 231, 235, 1)",   // 9
+          "rgba(243, 244, 246, 1)",   // 10
         ],
         borderWidth: 1,
       },
@@ -282,8 +272,8 @@ export default function ClassTable({ grades, className }) {
             };
           }),
         ],
-        backgroundColor: "rgba(75, 192, 192, 1)",
-        borderColor: "rgba(75, 192, 192, 1)",
+        backgroundColor: "rgba(55, 65, 81, 0.8)",
+        borderColor: "rgba(55, 65, 81, 1)",
         pointRadius: 4,
         pointHoverRadius: 7,
       },
@@ -299,10 +289,10 @@ export default function ClassTable({ grades, className }) {
     
     <div
       ref={tableRef}
-      className="p-6 bg-slate-100 rounded-lg shadow-lg shadow-slate-600"
+      className="p-6 bg-white border border-gray-200/60 rounded-2xl shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)]"
     >
       <div className="flex justify-center">
-        <h1 className="text-3xl bg-blue-700 font-bold mb-6 text-white text-center rounded-md p-2 md:p-6 shadow-md">
+        <h1 className="text-lg bg-gray-900 font-semibold mb-6 text-white text-center rounded-xl px-6 py-3 shadow-sm">
           Classe: "{className}"
         </h1>
         <DownloadPDFButton

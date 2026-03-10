@@ -35,7 +35,7 @@ const StudentProfile = ({ mean, median, standardDeviation, mode, profiles }) => 
   const studentProfileDescription = determineProfile(mean, median, standardDeviation, mode, profiles);
 
   return (
-    <div className="mt-6 bg-gray-50 border border-gray-100 rounded-xl p-6">
+    <div className="mt-6 bg-gray-50 border border-gray-200/60 rounded-2xl p-6 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)]">
       <p className="text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-gray-400 mb-4">Profilo studente</p>
       <p className="text-sm text-gray-700 leading-relaxed">{studentProfileDescription}</p>
     </div>

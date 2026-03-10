@@ -95,7 +95,7 @@ export default function ClassCharts({
   
       {/* Grafico Distribuzione Normale */}
       <div className="flex flex-col items-center w-full">
-        <h1 className="text-lg md:text-2xl font-bold mb-4 text-center">
+        <h1 className="text-sm font-semibold text-gray-900 mb-4 text-center">
           Distribuzione Normale (Gaussiana)
         </h1>
         <div className="w-full flex justify-center">
@@ -105,7 +105,7 @@ export default function ClassCharts({
   
       {/* Istogramma a barre */}
       <div className="flex flex-col items-center w-full">
-        <h1 className="text-lg md:text-2xl font-bold mb-4 text-center">Istogramma</h1>
+        <h1 className="text-sm font-semibold text-gray-900 mb-4 text-center">Istogramma</h1>
         <div className="w-full flex justify-center">
           <Chart type="bar" data={gradeDistData} className="w-full h-auto" />
         </div>
@@ -113,7 +113,7 @@ export default function ClassCharts({
   
 {/* Grafico a Dispersione Temporale */}
 <div className="flex flex-col items-center w-full">
-  <h1 className="text-lg md:text-2xl font-bold mb-4 text-center">
+  <h1 className="text-sm font-semibold text-gray-900 mb-4 text-center">
     Grafico a Dispersione Temporale
   </h1>
   <div className="w-full flex justify-center mb-6">
@@ -161,14 +161,14 @@ export default function ClassCharts({
   
       {/* Grafico Min / Max Voto */}
       <div className="flex flex-col items-center w-full">
-        <h1 className="text-lg md:text-2xl font-bold text-center">
+        <h1 className="text-sm font-semibold text-gray-900 text-center">
           Grafico Minimo-Massimo
         </h1>
         <div className="w-full flex justify-center">
           <Chart type="bar" data={maxMinGradeData} className="w-full h-auto" />
         </div>
-        <div className="hidden md:flex opacity-80 bg-blue-500 shadow-md p-3 items-center text-sm sm:text-base rounded-lg">
-          <p className="text-white text-center">
+        <div className="hidden md:flex mt-3 bg-gray-50 border border-gray-200/60 rounded-xl p-3 items-center text-sm">
+          <p className="text-gray-600 text-center">
             Max: {stats.maxDetails?.name} ({formatDate(stats.maxDetails?.date)}) <br />
             Min: {stats.minDetails?.name} ({formatDate(stats.minDetails?.date)})
           </p>
@@ -177,7 +177,7 @@ export default function ClassCharts({
   
       {/* Grafico a Torta */}
       <div className="flex flex-col items-center w-full">
-        <h1 className="text-lg md:text-2xl font-bold mb-4 text-center">
+        <h1 className="text-sm font-semibold text-gray-900 mb-4 text-center">
           Grafico a Torta
         </h1>
         <div className="w-full flex justify-center lg:px-10">
@@ -187,7 +187,7 @@ export default function ClassCharts({
   
       {/* Grafico a Ciambella */}
       <div className="flex flex-col items-center w-full lg:px-10">
-        <h1 className="text-lg md:text-2xl font-bold mb-4">Grafico a Ciambella</h1>
+        <h1 className="text-sm font-semibold text-gray-900 mb-4">Grafico a Ciambella</h1>
         <div className="w-full flex justify-center">
           <Chart type="doughnut" data={gradeDistDonutData} className="w-full h-auto" options={{ responsive: true, plugins: { datalabels: { display: true, color: "white", font: { size: 10 }, formatter: (value, ctx) => { let sum = ctx.chart.data.datasets[0].data.reduce((a, b) => a + b, 0); return ((value / sum) * 100).toFixed(2) + "%"; } }, legend: { position: "left", labels: { boxWidth: 10, padding: 10 } } } }} />
         </div>

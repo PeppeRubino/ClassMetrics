@@ -40,7 +40,7 @@ const calculateMode = (grades) => {
 
 function StatItem({ title, individualValue, classValue, tooltipText }) {
   return (
-    <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm" title={tooltipText}>
+    <div className="bg-white border border-gray-200/60 rounded-2xl p-4 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)] hover:-translate-y-0.5 hover:shadow-[0_12px_40px_-12px_rgba(0,0,0,0.12)] transition-all duration-200" title={tooltipText}>
       <p className="text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-gray-400 mb-2">{title}</p>
       <p className="text-xl font-semibold text-gray-900">{individualValue}</p>
       <p className="text-xs text-gray-400 mt-1">{classValue}</p>
@@ -63,7 +63,7 @@ export default function StudentStats({ studentGrades, classGrades }) {
   const classStandardDeviation = calculateStandardDeviation(classScores);
 
   return (
-    <div className="mt-6 bg-gray-50 border border-gray-100 rounded-xl p-6">
+    <div className="mt-6 bg-gray-50 border border-gray-200/60 rounded-2xl p-6 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)]">
       <p className="text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-gray-400 mb-4">Statistiche studente</p>
       <div className="grid grid-cols-2 gap-3">
         <StatItem

@@ -88,9 +88,9 @@ export default function StudentChart({ grades, studentName }) {
   });
 
   const getDotColor = (voto) => {
-    if (voto >= 1 && voto <= 3) return "red";
-    if (voto >= 4 && voto <= 5) return "orange";
-    if (voto >= 6 && voto <= 10) return "green";
+    if (voto >= 1 && voto <= 3) return "#111827";
+    if (voto >= 4 && voto <= 5) return "#6b7280";
+    if (voto >= 6 && voto <= 10) return "#d1d5db";
   };
 
   return (
@@ -105,7 +105,7 @@ export default function StudentChart({ grades, studentName }) {
           <button
             key={month}
             onClick={() => setSelectedMonth(month)}
-            className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-all duration-150 ${
+            className={`px-3 py-1.5 rounded-xl text-xs font-medium border transition-all duration-200 ${
               selectedMonth === month
                 ? "bg-gray-900 text-white border-gray-900"
                 : "bg-white text-gray-500 border-gray-200 hover:border-gray-400"
@@ -116,7 +116,7 @@ export default function StudentChart({ grades, studentName }) {
         ))}
         <button
           onClick={() => setSelectedMonth(null)}
-          className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-all duration-150 ${
+          className={`px-3 py-1.5 rounded-xl text-xs font-medium border transition-all duration-200 ${
             selectedMonth === null
               ? "bg-gray-900 text-white border-gray-900"
               : "bg-white text-gray-500 border-gray-200 hover:border-gray-400"
@@ -154,7 +154,7 @@ export default function StudentChart({ grades, studentName }) {
           <Line
             type="monotone"
             dataKey="VotoOrale"
-            stroke="#8884d8"
+            stroke="#374151"
             strokeWidth={2}
             connectNulls={true}
             dot={({ cx, cy, payload }) =>
@@ -171,7 +171,7 @@ export default function StudentChart({ grades, studentName }) {
           <Line
             type="monotone"
             dataKey="VotoScritto"
-            stroke="#82ca9d"
+            stroke="#9ca3af"
             strokeWidth={2}
             connectNulls={true}
             dot={({ cx, cy, payload }) =>
@@ -187,7 +187,7 @@ export default function StudentChart({ grades, studentName }) {
           />
           <ReferenceLine
             y={6}
-            stroke="#82ca9d"
+            stroke="#d1d5db"
             strokeWidth={2}
             strokeDasharray="3 3"
           />
@@ -198,27 +198,27 @@ export default function StudentChart({ grades, studentName }) {
       <div className="mt-8 text-sm">
         <div className="flex flex-wrap justify-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="inline-block w-4 h-4 rounded-full bg-red-500"></span>
+            <span className="inline-block w-4 h-4 rounded-full bg-gray-900"></span>
             <span>Voti bassi (1-3)</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="inline-block w-4 h-4 rounded-full bg-orange-500"></span>
+            <span className="inline-block w-4 h-4 rounded-full bg-gray-500"></span>
             <span>Voti medi (4-5)</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="inline-block w-4 h-4 rounded-full bg-green-500"></span>
+            <span className="inline-block w-4 h-4 rounded-full bg-gray-300"></span>
             <span>Voti alti (6-10)</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="inline-block w-6 h-1 bg-[#8884d8]"></span>
-            <span>Voto Orale (linea violetta)</span>
+            <span className="inline-block w-6 h-1 bg-gray-700"></span>
+            <span>Voto Orale</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="inline-block w-6 h-1 bg-[#82ca9d]"></span>
-            <span>Voto Scritto (linea verde)</span>
+            <span className="inline-block w-6 h-1 bg-gray-400"></span>
+            <span>Voto Scritto</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="inline-block w-6 h-1 border-t-2 border-dashed border-[#82ca9d]"></span>
+            <span className="inline-block w-6 h-1 border-t-2 border-dashed border-gray-300"></span>
             <span>Riferimento: Voto 6</span>
           </div>
         </div>

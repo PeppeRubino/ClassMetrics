@@ -57,7 +57,7 @@ export default function FileUploader({ handleFileUpload }) {
       />
       <label
         htmlFor="file-upload"
-        className="cursor-pointer inline-flex items-center gap-2 bg-gray-900 text-white text-xs font-medium tracking-wide px-4 py-2 rounded-lg hover:opacity-90 transition-opacity"
+        className="cursor-pointer inline-flex items-center gap-2 bg-gray-900 text-white text-xs font-medium tracking-wide px-4 py-2 rounded-xl hover:opacity-90 transition-all duration-200"
       >
         Carica file Excel
         {fileStatus === true && <FaCheckCircle className="text-green-400 text-sm" />}
@@ -65,7 +65,7 @@ export default function FileUploader({ handleFileUpload }) {
       </label>
       <button
         onClick={handleTestFileUpload}
-        className="inline-flex items-center text-xs text-gray-400 hover:text-gray-600 underline underline-offset-2 transition-colors"
+        className="inline-flex items-center text-xs text-gray-400 hover:text-gray-600 underline underline-offset-2 transition-colors duration-200"
       >
         Usa file di test
       </button>

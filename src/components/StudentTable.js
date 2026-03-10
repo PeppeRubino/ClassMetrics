@@ -28,7 +28,7 @@ export default function StudentTable({ grades }) {
   return (
     <div className="mt-8">
       <p className="text-[0.6rem] font-semibold uppercase tracking-[0.25em] text-gray-400 mb-3">Registro voti</p>
-      <div className="overflow-x-auto rounded-xl border border-gray-100 shadow-sm">
+      <div className="overflow-x-auto rounded-2xl border border-gray-200/60 shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)]">
         <table className="min-w-full table-auto">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-100">
@@ -40,7 +40,7 @@ export default function StudentTable({ grades }) {
           <tbody className="bg-white divide-y divide-gray-50">
             {Array.isArray(grades) ? (
               grades.map((grade, index) => (
-                <tr key={index} className="hover:bg-gray-50 transition-colors">
+                <tr key={index} className="hover:bg-gray-50 transition-colors duration-200">
                   <td className="px-4 py-2.5 text-sm font-medium text-gray-900">{grade.Voto}</td>
                   <td className="px-4 py-2.5 text-sm text-gray-600">{parseDate(grade.Data)}</td>
                   <td className="px-4 py-2.5 text-sm text-gray-600">{grade.Tipo}</td>

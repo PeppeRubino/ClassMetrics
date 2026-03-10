@@ -46,7 +46,7 @@ const DownloadPDFButton = ({ targetRef, fileName = "documento" }) => {
     <>
       <button
         onClick={downloadPDF}
-        className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded mt-4 scale-75 shadow-md absolute -right-1"
+        className="bg-gray-900 text-white text-xs font-semibold px-4 py-2 rounded-xl mt-4 shadow-sm hover:opacity-90 transition-all duration-200 absolute -right-1"
       >
         Scarica PDF
       </button>

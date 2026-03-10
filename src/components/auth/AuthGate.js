@@ -65,8 +65,8 @@ export function AuthGate({ children }) {
 
   if (session === undefined) {
     return (
-      <div style={{ display: 'flex', minHeight: '100vh', alignItems: 'center', justifyContent: 'center', background: '#f8fafc' }}>
-        <p style={{ fontSize: '0.65rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.3em' }}>Caricamento…</p>
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <p className="text-[0.6rem] text-gray-400 uppercase tracking-[0.3em]">Caricamento…</p>
       </div>
     );
   }
